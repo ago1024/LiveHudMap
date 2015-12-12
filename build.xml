@@ -3,6 +3,28 @@
 	<property name="modname" value="livemap"/>
 	<property file="build.properties"/>
 	
+	<taskdef name="jgit-buildnumber" classname="ru.concerteza.util.buildnumber.JGitBuildNumberAntTask">
+		<classpath>
+			<pathelement location="lib/jgit-buildnumber-ant-task-1.2.10.jar" />
+			<pathelement location="lib/org.eclipse.jgit-2.0.0.jar" />
+		</classpath>
+	</taskdef>
+
+	<target name="git-revision">
+		<jgit-buildnumber />
+	    <script language="javascript">
+	        var tag = project.getProperty("git.tag")
+	        var revision = project.getProperty("git.shortRevision")
+	    	var buildnumber;
+	    	if (tag) {
+	        	buildnumber = tag + "-" + revision
+	    	} else {
+	    		buildnumber = project.getProperty("git.branch") + "-" + revision
+	    	}
+	        project.setProperty("git.buildnumber", buildnumber)
+	    </script>
+	</target>
+
 	<path id="modlauncher">
 		<fileset dir="lib">
 			<include name="modlauncher.jar"/>
@@ -18,7 +40,7 @@
 		</fileset>
 	</path>
 	
-	<target name="compile">
+	<target name="compile" depends="git-revision">
 		<delete dir="bin.ant"/>
 		<mkdir dir="bin.ant"/>
 		<javac srcdir="src" destdir="bin.ant" debug="true">
@@ -30,6 +52,9 @@
 	
 	<target name="jar" depends="compile">
 		<jar destfile="mods/${modname}/${modname}.jar">
+			<manifest>
+				<attribute name="Implementation-Version" value="${git.buildnumber}"/>
+			</manifest>
 			<fileset dir="bin.ant">
 			</fileset>
 		</jar>
