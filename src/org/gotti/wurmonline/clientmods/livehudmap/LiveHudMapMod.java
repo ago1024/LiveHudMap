@@ -16,6 +16,7 @@ import com.wurmonline.client.renderer.gui.HeadsUpDisplay;
 import com.wurmonline.client.renderer.gui.LiveMapWindow;
 import com.wurmonline.client.renderer.gui.MainMenu;
 import com.wurmonline.client.renderer.gui.WurmComponent;
+import com.wurmonline.client.settings.SavePosManager;
 
 public class LiveHudMapMod implements WurmMod, Initable, PreInitable {
 
@@ -81,13 +82,14 @@ public class LiveHudMapMod implements WurmMod, Initable, PreInitable {
 			LiveMapWindow liveMapWindow = new LiveMapWindow(world);
 			this.liveMap = liveMapWindow;
 
-			MainMenu mainMenu = ReflectionUtil.getPrivateField(hud,
-					ReflectionUtil.getField(hud.getClass(), "mainMenu"));
+			MainMenu mainMenu = ReflectionUtil.getPrivateField(hud, ReflectionUtil.getField(hud.getClass(), "mainMenu"));
 			mainMenu.registerComponent("Live map", liveMapWindow);
 
-			List<WurmComponent> components = ReflectionUtil.getPrivateField(hud,
-					ReflectionUtil.getField(hud.getClass(), "components"));
+			List<WurmComponent> components = ReflectionUtil.getPrivateField(hud, ReflectionUtil.getField(hud.getClass(), "components"));
 			components.add(liveMapWindow);
+			
+			SavePosManager savePosManager = ReflectionUtil.getPrivateField(hud, ReflectionUtil.getField(hud.getClass(), "savePosManager"));
+			savePosManager.registerAndRefresh(liveMapWindow, "livemapwindow");
 
 		}
 		catch (IllegalArgumentException | IllegalAccessException | ClassCastException | NoSuchFieldException e) {

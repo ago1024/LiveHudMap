@@ -13,7 +13,7 @@ public class LiveMapWindow extends WWindow {
 	private final LiveMap liveMap;
 
 	public LiveMapWindow(World world) {
-		super("Live map");
+		super("Live map", true);
 		setTitle("Live map");
 		resizable = false;
 		mainPanel = new WurmBorderPanel("Live map");
