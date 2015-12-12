@@ -1,0 +1,9 @@
+bin.ant
+bin
+dist
+build.properties
+.classpath
+.project
+.settings
+*~
+mods/*/*.jar

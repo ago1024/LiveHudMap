@@ -1,0 +1,53 @@
+<project>
+	
+	<property name="modname" value="livemap"/>
+	<property file="build.properties"/>
+	
+	<path id="modlauncher">
+		<fileset dir="lib">
+			<include name="modlauncher.jar"/>
+			<include name="javassist.jar"/>
+		</fileset>
+		<fileset dir="${wudir}">
+			<include name="client.jar"/>
+			<include name="client-patched.jar"/>
+			<include name="common.jar"/>
+		</fileset>
+		<fileset dir="${wudir}/lib">
+			<include name="lwjgl-2.9.1.jar"/>
+		</fileset>
+	</path>
+	
+	<target name="compile">
+		<delete dir="bin.ant"/>
+		<mkdir dir="bin.ant"/>
+		<javac srcdir="src" destdir="bin.ant" debug="true">
+			<classpath>
+				<path refid="modlauncher"/>
+			</classpath>
+		</javac>
+	</target>
+	
+	<target name="jar" depends="compile">
+		<jar destfile="mods/${modname}/${modname}.jar">
+			<fileset dir="bin.ant">
+			</fileset>
+		</jar>
+	</target>
+	
+	<target name="zip" depends="jar">
+		<zip destfile="dist/${modname}.zip">
+			<zipfileset dir="mods" prefix="mods">
+				<include name="${modname}.properties"/>
+				<include name="${modname}/**"/>
+			</zipfileset>
+		</zip>
+	</target>
+	
+	<target name="install" depends="jar">
+		<mkdir dir="${wudir}/mods"/>
+		<mkdir dir="${wudir}/mods/${modname}"/>
+		<copy todir="${wudir}/mods" file="mods/${modname}.properties"/>
+		<copy todir="${wudir}/mods/${modname}" file="mods/${modname}/${modname}.jar"/>
+	</target>
+</project>
