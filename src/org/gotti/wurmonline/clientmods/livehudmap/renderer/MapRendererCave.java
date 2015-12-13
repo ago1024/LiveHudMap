@@ -27,10 +27,8 @@ public class MapRendererCave extends AbstractCaveRenderer {
 				final short height = getHeight(x + xo, y + yo);
 				Tile tile = getTileType(x + xo, y + yo);
 
-				if (tile != Tile.TILE_CAVE && tile != Tile.TILE_CAVE_EXIT && tile != Tile.TILE_CAVE_WALL) {
-					if (isSurroundedByRock(x + xo, y + yo)) {
-						tile = Tile.TILE_CAVE_WALL;
-					}
+				if (tile != Tile.TILE_CAVE_WALL && !isTunnel(tile) && isSurroundedByRock(x + xo, y + yo)) {
+					tile = Tile.TILE_CAVE_WALL;
 				}
 
 				final Color color;
@@ -64,9 +62,19 @@ public class MapRendererCave extends AbstractCaveRenderer {
 		bi2.getRaster().setPixels(0, 0, lWidth, lWidth, data);
 		return bi2;
 	}
+	
+	
+	private boolean isTunnel(int x, int y) {
+		Tile tileType = getTileType(x, y);
+		return isTunnel(tileType);
+	}
+
+	private boolean isTunnel(Tile tileType) {
+		return tileType == Tile.TILE_CAVE || tileType == Tile.TILE_CAVE_FLOOR_REINFORCED || tileType == Tile.TILE_CAVE_EXIT;
+	}
+	
 
 	private boolean isSurroundedByRock(int x, int y) {
-		return getTileType(x + 1, y) != Tile.TILE_CAVE && getTileType(x - 1, y) != Tile.TILE_CAVE
-				&& getTileType(x, y + 1) != Tile.TILE_CAVE && getTileType(x, y - 1) != Tile.TILE_CAVE;
+		return !isTunnel(x + 1, y) && !isTunnel(x - 1, y) && !isTunnel(x, y + 1) && !isTunnel(x, y - 1);
 	}
 }
