@@ -28,6 +28,7 @@ public class LiveMapWindow extends WWindow {
         final ResourceTexture texture = ResourceTextureLoader.getTexture("img.gui.button.mainmenu." + themeName);
         
         WurmArrayPanel<WButton> buttons = new WurmArrayPanel<WButton>("Live map buttons", WurmArrayPanel.DIR_VERTICAL);
+        buttons.setInitialSize(55, 256, false);
         buttons.addComponent(new WTextureButton("Zoom in", "Zoom in" , texture, new ButtonListener() {
 
 			@Override
@@ -83,7 +84,11 @@ public class LiveMapWindow extends WWindow {
 		mainPanel.setComponent(buttons, WurmBorderPanel.EAST);
 		
 		setComponent(mainPanel);
-		setInitialSize(256 + 6 + 75, 256, false);
+		setInitialSize();
+	}
+	
+	public void setInitialSize() {
+		setInitialSize(256 + 6 + 55, 256 + 25, false);
 	}
 	
 	public void closePressed()

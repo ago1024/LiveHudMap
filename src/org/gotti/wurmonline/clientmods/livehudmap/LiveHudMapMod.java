@@ -90,7 +90,7 @@ public class LiveHudMapMod implements WurmMod, Initable, PreInitable {
 			
 			SavePosManager savePosManager = ReflectionUtil.getPrivateField(hud, ReflectionUtil.getField(hud.getClass(), "savePosManager"));
 			savePosManager.registerAndRefresh(liveMapWindow, "livemapwindow");
-
+			liveMapWindow.setInitialSize();
 		}
 		catch (IllegalArgumentException | IllegalAccessException | ClassCastException | NoSuchFieldException e) {
 			throw new RuntimeException(e);
