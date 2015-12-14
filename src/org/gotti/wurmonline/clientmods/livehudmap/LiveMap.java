@@ -2,9 +2,6 @@ package org.gotti.wurmonline.clientmods.livehudmap;
 
 import java.awt.image.BufferedImage;
 
-import org.gotti.wurmonline.clientmods.livehudmap.renderer.AbstractSurfaceRenderer;
-import org.gotti.wurmonline.clientmods.livehudmap.renderer.MapRendererCave;
-import org.gotti.wurmonline.clientmods.livehudmap.renderer.MapRendererFlat;
 import org.lwjgl.opengl.GL11;
 
 import com.wurmonline.client.game.PlayerPosition;
@@ -15,12 +12,12 @@ import com.wurmonline.client.resources.textures.ImageTexture;
 import com.wurmonline.client.resources.textures.ImageTextureLoader;
 
 public class LiveMap implements TerrainChangeListener, CaveBufferChangeListener {
-
+	
 	private int size;
-	private int mapsize;
 	private final World world;
-	private final AbstractSurfaceRenderer surfaceRenderer;
-	private final MapRendererCave caveRenderer;
+	
+	private MapLayerView surface;
+	private MapLayerView cave;
 
 	private boolean dirty = true;
 	private BufferedImage image;
@@ -29,20 +26,19 @@ public class LiveMap implements TerrainChangeListener, CaveBufferChangeListener 
 	private float[] textureCoord = { 0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 1.0F, 0.0F };
 	private int x;
 	private int y;
-	private int cavemapsize;
 	
 	private int px = 0, py = 0;
 	
-	public LiveMap(World world, int size, int mapsize) {
+	public LiveMap(World world, int size) {
 		this.size = size;
-		this.mapsize = mapsize;
-		this.cavemapsize = 32;
+		
 		this.world = world;
-		this.surfaceRenderer = new MapRendererFlat(world.getNearTerrainBuffer(), 0x1000, 0x1000, this.mapsize);
-		this.caveRenderer = new MapRendererCave(world.getCaveBuffer(), 0x1000, 0x1000, this.cavemapsize);
 		
 		this.world.getNearTerrainBuffer().addListener(this);
 		this.world.getCaveBuffer().addCaveBufferListener(this);
+		
+		this.surface = new MapLayerView(world, RenderType.FLAT);
+		this.cave = new MapLayerView(world, RenderType.CAVE);
 	}
 
 	public void update(int windowX, int windowY) {
@@ -54,20 +50,50 @@ public class LiveMap implements TerrainChangeListener, CaveBufferChangeListener 
 			px = pos.getTileX();
 			py = pos.getTileY();
 			
-			if (pos.getLayer() >= 0)
-				image = surfaceRenderer.createMapDump(px - mapsize / 2, py - mapsize / 2, mapsize, mapsize, px, py);
-			else
-				image = caveRenderer.createMapDump(px - cavemapsize / 2, py - cavemapsize / 2, cavemapsize, cavemapsize, px, py);
+			image = getLayer().render(px, py);
 			texture = ImageTextureLoader.loadNowrapNearestTexture(image);
 			
 			dirty = false;
 		}
 	}
 	
-	protected void gameTick(int windowX, int windowY, int textureX, int textureY, float textureScale) {
+	private MapLayerView getLayer() {
+		if (isSurface()) {
+			return surface;
+		} else {
+			return cave;
+		}
 	}
 	
+	private MapLayerView getLayer(MapLayer layer) {
+		switch (layer) {
+		case SURFACE:
+			return surface;
+		case CAVE:
+			return cave;
+		}
+		throw new IllegalArgumentException(layer.name());
+	}
+	
+	public void setRenderer(MapLayer layer, RenderType renderType) {
+		getLayer(layer).setRenderer(renderType);
+		dirty = true;
+	}
+	
+	public void zoomIn(MapLayer layer) {
+		getLayer(layer).zoomIn();
+		dirty = true;
+	}
 
+	public void zoomOut(MapLayer layer) {
+		getLayer(layer).zoomOut();
+		dirty = true;
+	}
+
+	private boolean isSurface() {
+		return world.getPlayerLayer() >= 0;
+	}
+	
 	public void render(float textureX, float textureY, float textureScale) {
 		float resultX = textureX / this.size;
 		float resultY = textureY / this.size;

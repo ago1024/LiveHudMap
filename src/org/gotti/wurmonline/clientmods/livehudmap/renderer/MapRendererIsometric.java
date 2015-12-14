@@ -8,8 +8,8 @@ import com.wurmonline.mesh.Tiles.Tile;
 
 public class MapRendererIsometric extends AbstractSurfaceRenderer {
 	
-	public MapRendererIsometric(NearTerrainDataBuffer buffer, int mapWidth, int mapHeight, int size) {
-		super(buffer, mapWidth, mapHeight, size);
+	public MapRendererIsometric(NearTerrainDataBuffer buffer) {
+		super(buffer);
 	}
 	
     public BufferedImage createMapDump(int xo, int yo, int lWidth, int lHeight, int px, int py) {
@@ -32,7 +32,7 @@ public class MapRendererIsometric extends AbstractSurfaceRenderer {
 
                 final float hh = node;
 
-                float h = ((node2 - node) * 1500) / 256.0f * getWidth() / 128 + hh / 2 + 1.0f;
+                float h = ((node2 - node) * 1500) / 256.0f * 0x10000 / 128 + hh / 2 + 1.0f;
                 h *= 0.4f;
 
                 float r = h;

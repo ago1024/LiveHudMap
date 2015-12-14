@@ -22,7 +22,7 @@ public class LiveMapWindow extends WWindow {
 		
 		setInitialSize(windowSizeWidth + 6, windowSizeHeight + 25, false);
 		
-		liveMap = new LiveMap(world, windowSizeWidth, 128);
+		liveMap = new LiveMap(world, windowSizeWidth);
 	}
 	
 	protected void renderComponent(float alpha) {

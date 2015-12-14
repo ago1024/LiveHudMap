@@ -7,8 +7,8 @@ import com.wurmonline.client.game.CaveDataBuffer;
 import com.wurmonline.mesh.Tiles.Tile;
 
 public class MapRendererCave extends AbstractCaveRenderer {
-	public MapRendererCave(CaveDataBuffer buffer, int mapWidth, int mapHeight, int size) {
-		super(buffer, mapWidth, mapHeight, size);
+	public MapRendererCave(CaveDataBuffer buffer) {
+		super(buffer);
 	}
 
 	@Override

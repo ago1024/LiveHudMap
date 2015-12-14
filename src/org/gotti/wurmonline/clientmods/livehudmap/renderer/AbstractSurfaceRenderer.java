@@ -12,16 +12,9 @@ public abstract class AbstractSurfaceRenderer implements MapRenderer {
 	public abstract BufferedImage createMapDump(int xo, int yo, int lWidth, int lHeight, int px, int py);
 
 	protected final NearTerrainDataBuffer buffer;
-	protected final int mapWidth;
-	protected final int mapHeight;
-	protected final int size;
 
-
-	public AbstractSurfaceRenderer(NearTerrainDataBuffer buffer, int mapWidth, int mapHeight, int size) {
+	public AbstractSurfaceRenderer(NearTerrainDataBuffer buffer) {
 		this.buffer = buffer;
-		this.mapWidth = mapWidth;
-		this.mapHeight = mapHeight;
-		this.size = size;
 	}
 
 	protected short getSurfaceHeight(int x, int y) {
@@ -31,13 +24,4 @@ public abstract class AbstractSurfaceRenderer implements MapRenderer {
 	protected Tile getTileType(int x, int y) {
 		return buffer.getTileType(x, y);
 	}
-	
-	protected int getWidth() {
-		return mapWidth;
-	}
-
-	protected int getHeight() {
-		return mapHeight;
-	}
-
 }

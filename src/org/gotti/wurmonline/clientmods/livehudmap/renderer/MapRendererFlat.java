@@ -7,8 +7,8 @@ import com.wurmonline.client.game.NearTerrainDataBuffer;
 import com.wurmonline.mesh.Tiles.Tile;
 
 public class MapRendererFlat extends AbstractSurfaceRenderer {
-	public MapRendererFlat(NearTerrainDataBuffer buffer, int mapWidth, int mapHeight, int size) {
-		super(buffer, mapWidth, mapHeight, size);
+	public MapRendererFlat(NearTerrainDataBuffer buffer) {
+		super(buffer);
 	}
 
 	@Override
