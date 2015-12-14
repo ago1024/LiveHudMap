@@ -27,12 +27,12 @@ public class MapRendererIsometric extends AbstractSurfaceRenderer {
             int alt = y0 - 1;
             for (int y = y0 - 1; y >= -lHeight && alt >= 0; y--) {
                 float node = (float) (getSurfaceHeight(x + xo, y + yo) / (Short.MAX_VALUE / 3.3f));
-                float node2 = x == lWidth - 1 || y == y0 - 1 ? node : (float) (getSurfaceHeight(x + 1 + xo, y + 1 + yo) / (Short.MAX_VALUE / 3.3f));
+                float node2 = y == y0 - 1 ? node : (float) (getSurfaceHeight(x + 1 + xo, y + 1 + yo) / (Short.MAX_VALUE / 3.3f));
 
 
                 final float hh = node;
 
-                float h = ((node2 - node) * 1500) / 256.0f * 0x10000 / 128 + hh / 2 + 1.0f;
+                float h = ((node2 - node) * 1500) / 256.0f * 0x1000 / 128 + hh / 2 + 1.0f;
                 h *= 0.4f;
 
                 float r = h;
