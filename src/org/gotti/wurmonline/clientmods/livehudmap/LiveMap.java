@@ -2,6 +2,7 @@ package org.gotti.wurmonline.clientmods.livehudmap;
 
 import java.awt.image.BufferedImage;
 
+import org.gotti.wurmonline.clientmods.livehudmap.renderer.RenderType;
 import org.lwjgl.opengl.GL11;
 
 import com.wurmonline.client.game.PlayerPosition;

@@ -3,6 +3,7 @@ package org.gotti.wurmonline.clientmods.livehudmap;
 import java.awt.image.BufferedImage;
 
 import org.gotti.wurmonline.clientmods.livehudmap.renderer.MapRenderer;
+import org.gotti.wurmonline.clientmods.livehudmap.renderer.RenderType;
 
 import com.wurmonline.client.game.World;
 import com.wurmonline.math.FastMath;

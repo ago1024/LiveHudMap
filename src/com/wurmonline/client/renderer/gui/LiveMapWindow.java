@@ -4,7 +4,7 @@ import java.util.Locale;
 
 import org.gotti.wurmonline.clientmods.livehudmap.LiveMap;
 import org.gotti.wurmonline.clientmods.livehudmap.MapLayer;
-import org.gotti.wurmonline.clientmods.livehudmap.RenderType;
+import org.gotti.wurmonline.clientmods.livehudmap.renderer.RenderType;
 
 import com.wurmonline.client.game.World;
 import com.wurmonline.client.options.Options;
@@ -53,7 +53,7 @@ public class LiveMapWindow extends WWindow {
 			}
         }));
         
-        buttons.addComponent(new WTextureButton("Flat", "Flat" , texture, new ButtonListener() {
+        buttons.addComponent(new WTextureButton("Flat", "Flat view" , texture, new ButtonListener() {
 
 			@Override
 			public void buttonPressed(WButton p0) {
@@ -65,7 +65,7 @@ public class LiveMapWindow extends WWindow {
 			}
         }));
         
-        buttons.addComponent(new WTextureButton("3D", "3D" , texture, new ButtonListener() {
+        buttons.addComponent(new WTextureButton("3D", "Pseudo 3D view" , texture, new ButtonListener() {
 
 			@Override
 			public void buttonPressed(WButton p0) {
@@ -76,6 +76,19 @@ public class LiveMapWindow extends WWindow {
 				liveMap.setRenderer(MapLayer.SURFACE, RenderType.ISOMETRIC);
 			}
         }));
+        
+        buttons.addComponent(new WTextureButton("Topo", "Topographic view" , texture, new ButtonListener() {
+
+			@Override
+			public void buttonPressed(WButton p0) {
+			}
+
+			@Override
+			public void buttonClicked(WButton p0) {
+				liveMap.setRenderer(MapLayer.SURFACE, RenderType.TOPOGRAPHIC);
+			}
+        }));
+        
         
         
         LiveMapView liveMapView = new LiveMapView("Live map", liveMap, 256, 256);
