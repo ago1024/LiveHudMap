@@ -20,12 +20,14 @@ public class MapRendererIsometric extends AbstractSurfaceRenderer {
 
         final BufferedImage bi2 = new BufferedImage(lWidth, lHeight, BufferedImage.TYPE_INT_RGB);
         final float[] data = new float[lWidth * lHeight * 3];
+                
+        int y0 = lHeight * 2;
         
         for (int x = 0; x < lWidth; x++) {
-            int alt = lHeight - 1;
-            for (int y = lHeight - 1; y >= 0; y--) {
+            int alt = y0 - 1;
+            for (int y = y0 - 1; y >= -lHeight && alt >= 0; y--) {
                 float node = (float) (getSurfaceHeight(x + xo, y + yo) / (Short.MAX_VALUE / 3.3f));
-                float node2 = x == lWidth - 1 || y == lHeight - 1 ? node : (float) (getSurfaceHeight(x + 1 + xo, y + 1 + yo) / (Short.MAX_VALUE / 3.3f));
+                float node2 = x == lWidth - 1 || y == y0 - 1 ? node : (float) (getSurfaceHeight(x + 1 + xo, y + 1 + yo) / (Short.MAX_VALUE / 3.3f));
 
 
                 final float hh = node;
@@ -74,11 +76,13 @@ public class MapRendererIsometric extends AbstractSurfaceRenderer {
 					b = 0;
 				}
                 
-                final int altTarget = y - (int) (getSurfaceHeight(x + xo, y + yo) * MAP_HEIGHT / 4  / (Short.MAX_VALUE / 3.3f));
+                final int altTarget = y - (int) (getSurfaceHeight(x + xo, y + yo) * MAP_HEIGHT / 4  / (Short.MAX_VALUE / 2.5f));
                 while (alt > altTarget && alt >= 0) {
-                    data[(x + alt * lWidth) * 3 + 0] = r * 255;
-                    data[(x + alt * lWidth) * 3 + 1] = g * 255;
-                    data[(x + alt * lWidth) * 3 + 2] = b * 255;
+                	if (alt < lHeight) {
+	                    data[(x + alt * lWidth) * 3 + 0] = r * 255;
+	                    data[(x + alt * lWidth) * 3 + 1] = g * 255;
+	                    data[(x + alt * lWidth) * 3 + 2] = b * 255;
+                	}
                     alt--;
                 }
             }
