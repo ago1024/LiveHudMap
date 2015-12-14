@@ -42,8 +42,8 @@ public class LiveMap implements TerrainChangeListener, CaveBufferChangeListener 
 	}
 
 	public void update(int windowX, int windowY) {
-		x = windowX + 3;
-		y = windowY + 21;
+		x = windowX;
+		y = windowY;
 
 		PlayerPosition pos = world.getPlayer().getPos();
 		if (dirty || px != pos.getTileX() || py != pos.getTileY()) {
@@ -80,13 +80,13 @@ public class LiveMap implements TerrainChangeListener, CaveBufferChangeListener 
 		dirty = true;
 	}
 	
-	public void zoomIn(MapLayer layer) {
-		getLayer(layer).zoomIn();
+	public void zoomIn() {
+		getLayer().zoomIn();
 		dirty = true;
 	}
 
-	public void zoomOut(MapLayer layer) {
-		getLayer(layer).zoomOut();
+	public void zoomOut() {
+		getLayer().zoomOut();
 		dirty = true;
 	}
 
