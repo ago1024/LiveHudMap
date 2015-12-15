@@ -57,6 +57,9 @@
 			</manifest>
 			<fileset dir="bin.ant">
 			</fileset>
+			<fileset dir="${basedir}">
+				<include name="livemapicons.png"/>
+			</fileset>
 		</jar>
 	</target>
 	
