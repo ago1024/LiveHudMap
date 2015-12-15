@@ -9,7 +9,7 @@ Requires [client modloader](https://github.com/ago1024/WurmClientModLauncher/rel
 * Extract livemap.zip into client folder (the jar should land in mods/livemap/livemap.jar)
 * Enjoy
 
-![Flat view](http://i.imgur.com/uTrcTix.png) ![3D view](http://i.imgur.com/BIOwfvm.png) ![Topgraphic view](http://i.imgur.com/oEuKg7j.png)
+![Flat view](http://i.imgur.com/uTrcTix.png) ![3D view](http://i.imgur.com/BIOwfvm.png) ![Topgraphic view](http://i.imgur.com/oEuKg7j.png) ![Cave view](http://i.imgur.com/OChWVAh.png)
 
 ## Issues
 
