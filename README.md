@@ -1,6 +1,6 @@
 # Live HUD Map for Wurm Unlimited
 
-Sponsored by RazorX Server
+Sponsored by [Razors Edge (Ages of Urath Saga)](http://forum.wurmonline.com/index.php?/topic/133419-razors-edge-ages-of-urath-saga/) Server
 
 ## Installation
 Requires [client modloader](https://github.com/ago1024/WurmClientModLauncher/releases/latest)
