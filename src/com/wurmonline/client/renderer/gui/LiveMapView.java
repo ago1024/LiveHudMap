@@ -10,6 +10,7 @@ public class LiveMapView extends FlexComponent {
 	LiveMapView(String name, LiveMap liveMap, int width, int height) {
 		super(name);
 		setInitialSize(width, height, false);
+		sizeFlags = FlexComponent.FIXED_WIDTH | FlexComponent.FIXED_HEIGHT;
 		
 		this.liveMap = liveMap;
 	}

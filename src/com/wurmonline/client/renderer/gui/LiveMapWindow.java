@@ -1,13 +1,23 @@
 package com.wurmonline.client.renderer.gui;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.URL;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.imageio.ImageIO;
 
 import org.gotti.wurmonline.clientmods.livehudmap.LiveMap;
 import org.gotti.wurmonline.clientmods.livehudmap.MapLayer;
 import org.gotti.wurmonline.clientmods.livehudmap.renderer.RenderType;
+import org.gotti.wurmunlimited.modloader.classhooks.HookManager;
 
 import com.wurmonline.client.game.World;
 import com.wurmonline.client.options.Options;
+import com.wurmonline.client.resources.textures.ImageTexture;
+import com.wurmonline.client.resources.textures.ImageTextureLoader;
 import com.wurmonline.client.resources.textures.ResourceTexture;
 import com.wurmonline.client.resources.textures.ResourceTextureLoader;
 
@@ -15,6 +25,7 @@ public class LiveMapWindow extends WWindow {
 	
 	private WurmBorderPanel mainPanel;
 	private LiveMap liveMap;
+	private BufferedImage iconImage;
 
 	public LiveMapWindow(World world) {
 		super("Live map", true);
@@ -23,13 +34,12 @@ public class LiveMapWindow extends WWindow {
 		
 		this.liveMap = new LiveMap(world, 256);
 		resizable = false;
+
+		iconImage = loadIconImage();
 		
-        final String themeName = Options.guiSkins.options[Options.guiSkins.value()].toLowerCase(Locale.ENGLISH).replace(" ", "");
-        final ResourceTexture texture = ResourceTextureLoader.getTexture("img.gui.button.mainmenu." + themeName);
-        
         WurmArrayPanel<WButton> buttons = new WurmArrayPanel<WButton>("Live map buttons", WurmArrayPanel.DIR_VERTICAL);
-        buttons.setInitialSize(35, 256, false);
-        buttons.addComponent(new WTextureButton("+", "Zoom in" , texture, new ButtonListener() {
+        buttons.setInitialSize(32, 256, false);
+        buttons.addComponent(createButton("+", "Zoom in" , 0, new ButtonListener() {
 
 			@Override
 			public void buttonPressed(WButton p0) {
@@ -41,7 +51,7 @@ public class LiveMapWindow extends WWindow {
 			}
         }));
 
-        buttons.addComponent(new WTextureButton("-", "Zoom out" , texture, new ButtonListener() {
+        buttons.addComponent(createButton("-", "Zoom out" , 1, new ButtonListener() {
 
 			@Override
 			public void buttonPressed(WButton p0) {
@@ -53,7 +63,7 @@ public class LiveMapWindow extends WWindow {
 			}
         }));
         
-        buttons.addComponent(new WTextureButton("Flat", "Flat view" , texture, new ButtonListener() {
+        buttons.addComponent(createButton("Flat", "Flat view" , 2, new ButtonListener() {
 
 			@Override
 			public void buttonPressed(WButton p0) {
@@ -65,7 +75,7 @@ public class LiveMapWindow extends WWindow {
 			}
         }));
         
-        buttons.addComponent(new WTextureButton("3D", "Pseudo 3D view" , texture, new ButtonListener() {
+        buttons.addComponent(createButton("3D", "Pseudo 3D view" , 3, new ButtonListener() {
 
 			@Override
 			public void buttonPressed(WButton p0) {
@@ -77,7 +87,7 @@ public class LiveMapWindow extends WWindow {
 			}
         }));
         
-        buttons.addComponent(new WTextureButton("Topo", "Topographic view" , texture, new ButtonListener() {
+        buttons.addComponent(createButton("Topo", "Topographic view" , 4, new ButtonListener() {
 
 			@Override
 			public void buttonPressed(WButton p0) {
@@ -97,11 +107,46 @@ public class LiveMapWindow extends WWindow {
 		mainPanel.setComponent(buttons, WurmBorderPanel.EAST);
 		
 		setComponent(mainPanel);
-		setInitialSize();
+		setInitialSize(256 + 6 + 32, 256 + 25, false);
+		layout();
+		sizeFlags = FlexComponent.FIXED_WIDTH | FlexComponent.FIXED_HEIGHT;
 	}
 	
-	public void setInitialSize() {
-		setInitialSize(256 + 6 + 35, 256 + 25, false);
+	private BufferedImage loadIconImage() {
+		try {
+			URL url = this.getClass().getClassLoader().getResource("livemapicons.png");
+			if (url == null && this.getClass().getClassLoader() == HookManager.getInstance().getLoader()) {
+				url = HookManager.getInstance().getClassPool().find(LiveMapWindow.class.getName());
+				if (url != null) {
+					String path = url.toString();
+					int pos = path.lastIndexOf('!');
+					if (pos != -1) {
+						path = path.substring(0, pos) + "!/livemapicons.png";
+					}
+					url = new URL(path);
+				}
+			}
+			if (url != null) {
+				return ImageIO.read(url);
+			} else {
+				return null;
+			}
+		} catch (IOException e) {
+			Logger.getLogger(LiveMapWindow.class.getName()).log(Level.WARNING, e.getMessage(), e);
+			return null;
+		}
+	}
+
+	private WButton createButton(String label, String tooltip, int textureIndex, ButtonListener listener) {
+		if (iconImage != null) {
+			BufferedImage image = iconImage.getSubimage(textureIndex * 32, 0, 32, 32);
+			ImageTexture texture = ImageTextureLoader.loadNowrapNearestTexture(image);
+			return new LiveMapButton("", tooltip, 32, 32, texture, listener);
+		} else {
+	        final String themeName = Options.guiSkins.options[Options.guiSkins.value()].toLowerCase(Locale.ENGLISH).replace(" ", "");
+			final ResourceTexture backgroundTexture = ResourceTextureLoader.getTexture("img.gui.button.mainmenu." + themeName);
+			return new WTextureButton(label, tooltip, backgroundTexture, listener);
+		}
 	}
 	
 	public void closePressed()
