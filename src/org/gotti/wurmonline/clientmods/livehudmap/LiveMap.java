@@ -11,6 +11,7 @@ import com.wurmonline.client.game.World;
 import com.wurmonline.client.renderer.cave.CaveBufferChangeListener;
 import com.wurmonline.client.resources.textures.ImageTexture;
 import com.wurmonline.client.resources.textures.ImageTextureLoader;
+import com.wurmonline.client.util.WurmGL;
 
 public class LiveMap implements TerrainChangeListener, CaveBufferChangeListener {
 	
@@ -52,6 +53,9 @@ public class LiveMap implements TerrainChangeListener, CaveBufferChangeListener 
 			py = pos.getTileY();
 			
 			image = getLayer().render(px, py);
+			if (texture != null) {
+				WurmGL.wglDeleteTexture(texture.getId());
+			}
 			texture = ImageTextureLoader.loadNowrapNearestTexture(image);
 			
 			dirty = false;
@@ -144,7 +148,7 @@ public class LiveMap implements TerrainChangeListener, CaveBufferChangeListener 
 
 	@Override
 	public void terrainUpdated(int paramInt1, int paramInt2, int paramInt3, int paramInt4, boolean paramBoolean1, boolean paramBoolean2) {
-		dirty = false;
+		dirty = true;
 	}
 
 }
