@@ -21,11 +21,11 @@ public class MapRendererIsometric extends AbstractSurfaceRenderer {
         final BufferedImage bi2 = new BufferedImage(lWidth, lHeight, BufferedImage.TYPE_INT_RGB);
         final float[] data = new float[lWidth * lHeight * 3];
                 
-        int y0 = lHeight * 2;
+        int y0 = lHeight + lHeight / 2;
         
         for (int x = 0; x < lWidth; x++) {
             int alt = y0 - 1;
-            for (int y = y0 - 1; y >= -lHeight && alt >= 0; y--) {
+            for (int y = y0 - 1; y >= -lHeight / 2 && alt >= 0; y--) {
                 float node = (float) (getSurfaceHeight(x + xo, y + yo) / (Short.MAX_VALUE / 3.3f));
                 float node2 = y == y0 - 1 ? node : (float) (getSurfaceHeight(x + 1 + xo, y + 1 + yo) / (Short.MAX_VALUE / 3.3f));
 

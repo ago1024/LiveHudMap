@@ -9,11 +9,6 @@ public enum RenderType {
 		public MapRenderer createMapRenderer(World world) {
 			return new MapRendererFlat(world.getNearTerrainBuffer());
 		}
-		
-		@Override
-		public int getMapSize() {
-			return 128;
-		}
 	},
 	
 	ISOMETRIC {
@@ -21,12 +16,6 @@ public enum RenderType {
 		public MapRenderer createMapRenderer(World world) {
 			return new MapRendererIsometric(world.getNearTerrainBuffer());
 		}
-		
-		@Override
-		public int getMapSize() {
-			return 128;
-		}
-
 	},
 	
 	TOPOGRAPHIC {
@@ -34,12 +23,6 @@ public enum RenderType {
 		public MapRenderer createMapRenderer(World world) {
 			return new MapRendererTopographic(world.getNearTerrainBuffer());
 		}
-		
-		@Override
-		public int getMapSize() {
-			return 128;
-		}
-		
 	},
 	
 	CAVE {
@@ -53,9 +36,17 @@ public enum RenderType {
 			return 32;
 		}
 	};
-	
+
+	public static boolean highRes = false;
+
 	public abstract MapRenderer createMapRenderer(World world);
 	
-	public abstract int getMapSize(); 
+	public int getMapSize() {
+		if (highRes) {
+			return 256;
+		} else {
+			return 128;
+		}
+	}
 
 }

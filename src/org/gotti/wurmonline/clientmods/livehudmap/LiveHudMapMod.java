@@ -3,10 +3,15 @@ package org.gotti.wurmonline.clientmods.livehudmap;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import org.gotti.wurmonline.clientmods.livehudmap.renderer.RenderType;
 import org.gotti.wurmunlimited.modloader.ReflectionUtil;
 import org.gotti.wurmunlimited.modloader.classhooks.HookManager;
 import org.gotti.wurmunlimited.modloader.classhooks.InvocationHandlerFactory;
+import org.gotti.wurmunlimited.modloader.interfaces.Configurable;
 import org.gotti.wurmunlimited.modloader.interfaces.Initable;
 import org.gotti.wurmunlimited.modloader.interfaces.PreInitable;
 import org.gotti.wurmunlimited.modloader.interfaces.WurmMod;
@@ -18,9 +23,22 @@ import com.wurmonline.client.renderer.gui.MainMenu;
 import com.wurmonline.client.renderer.gui.WurmComponent;
 import com.wurmonline.client.settings.SavePosManager;
 
-public class LiveHudMapMod implements WurmMod, Initable, PreInitable {
+public class LiveHudMapMod implements WurmMod, Initable, PreInitable, Configurable {
 
+	private static Logger logger = Logger.getLogger(LiveHudMapMod.class.getName());
+	
+	private boolean hiResMap = false;
+	
 	private Object liveMap;
+	
+	@Override
+	public void configure(Properties properties) {
+		hiResMap = Boolean.valueOf(properties.getProperty("hiResMap", String.valueOf(hiResMap)));
+		
+		logger.log(Level.INFO, "hiResMap: " + hiResMap);
+
+		RenderType.highRes = hiResMap;
+	}
 
 	@Override
 	public void preInit() {
