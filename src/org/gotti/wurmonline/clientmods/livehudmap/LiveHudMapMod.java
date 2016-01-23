@@ -93,25 +93,31 @@ public class LiveHudMapMod implements WurmMod, Initable, PreInitable, Configurab
 	}
 	
 	private void initLiveMap(HeadsUpDisplay hud) {
-
-		try {
-			World world = ReflectionUtil.getPrivateField(hud, ReflectionUtil.getField(hud.getClass(), "world"));
-
-			LiveMapWindow liveMapWindow = new LiveMapWindow(world);
-			this.liveMap = liveMapWindow;
-
-			MainMenu mainMenu = ReflectionUtil.getPrivateField(hud, ReflectionUtil.getField(hud.getClass(), "mainMenu"));
-			mainMenu.registerComponent("Live map", liveMapWindow);
-
-			List<WurmComponent> components = ReflectionUtil.getPrivateField(hud, ReflectionUtil.getField(hud.getClass(), "components"));
-			components.add(liveMapWindow);
+		
+		new Runnable() {
 			
-			SavePosManager savePosManager = ReflectionUtil.getPrivateField(hud, ReflectionUtil.getField(hud.getClass(), "savePosManager"));
-			savePosManager.registerAndRefresh(liveMapWindow, "livemapwindow");
-		}
-		catch (IllegalArgumentException | IllegalAccessException | ClassCastException | NoSuchFieldException e) {
-			throw new RuntimeException(e);
-		}
+			@Override
+			public void run() {
+				try {
+					World world = ReflectionUtil.getPrivateField(hud, ReflectionUtil.getField(hud.getClass(), "world"));
+		
+					LiveMapWindow liveMapWindow = new LiveMapWindow(world);
+					liveMap = liveMapWindow;
+		
+					MainMenu mainMenu = ReflectionUtil.getPrivateField(hud, ReflectionUtil.getField(hud.getClass(), "mainMenu"));
+					mainMenu.registerComponent("Live map", liveMapWindow);
+		
+					List<WurmComponent> components = ReflectionUtil.getPrivateField(hud, ReflectionUtil.getField(hud.getClass(), "components"));
+					components.add(liveMapWindow);
+					
+					SavePosManager savePosManager = ReflectionUtil.getPrivateField(hud, ReflectionUtil.getField(hud.getClass(), "savePosManager"));
+					savePosManager.registerAndRefresh(liveMapWindow, "livemapwindow");
+				}
+				catch (IllegalArgumentException | IllegalAccessException | ClassCastException | NoSuchFieldException e) {
+					throw new RuntimeException(e);
+				}
+			}
+		}.run();
 	}
 
 }
