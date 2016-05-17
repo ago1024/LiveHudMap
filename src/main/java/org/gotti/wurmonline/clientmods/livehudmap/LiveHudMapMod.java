@@ -14,7 +14,9 @@ import org.gotti.wurmunlimited.modloader.classhooks.InvocationHandlerFactory;
 import org.gotti.wurmunlimited.modloader.interfaces.Configurable;
 import org.gotti.wurmunlimited.modloader.interfaces.Initable;
 import org.gotti.wurmunlimited.modloader.interfaces.PreInitable;
-import org.gotti.wurmunlimited.modloader.interfaces.WurmMod;
+import org.gotti.wurmunlimited.modloader.interfaces.WurmClientMod;
+import org.gotti.wurmunlimited.modsupport.console.ConsoleListener;
+import org.gotti.wurmunlimited.modsupport.console.ModConsole;
 
 import com.wurmonline.client.game.World;
 import com.wurmonline.client.renderer.gui.HeadsUpDisplay;
@@ -23,7 +25,7 @@ import com.wurmonline.client.renderer.gui.MainMenu;
 import com.wurmonline.client.renderer.gui.WurmComponent;
 import com.wurmonline.client.settings.SavePosManager;
 
-public class LiveHudMapMod implements WurmMod, Initable, PreInitable, Configurable {
+public class LiveHudMapMod implements WurmClientMod, Initable, PreInitable, Configurable, ConsoleListener {
 
 	private static Logger logger = Logger.getLogger(LiveHudMapMod.class.getName());
 	
@@ -67,29 +69,7 @@ public class LiveHudMapMod implements WurmMod, Initable, PreInitable, Configurab
 					}
 				});
 
-		HookManager.getInstance().registerHook("com.wurmonline.client.console.WurmConsole", "handleInput2", "(Ljava/lang/String;Z)V",
-				new InvocationHandlerFactory() {
-
-					@Override
-					public InvocationHandler createInvocationHandler() {
-						return new InvocationHandler() {
-
-							@Override
-							public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-								synchronized (proxy) {
-									String string = String.valueOf(args[0]);
-									if (string.startsWith("toggle livemap") && liveMap instanceof LiveMapWindow) {
-										((LiveMapWindow)liveMap).toggle();
-										return null;
-									}
-
-									return method.invoke(proxy, args);
-								}
-							}
-						};
-					}
-				});
-
+		ModConsole.addConsoleListener(this);
 	}
 	
 	private void initLiveMap(HeadsUpDisplay hud) {
@@ -118,6 +98,15 @@ public class LiveHudMapMod implements WurmMod, Initable, PreInitable, Configurab
 				}
 			}
 		}.run();
+	}
+	
+	@Override
+	public boolean handleInput(String string, Boolean silent) {
+		if (string != null && string.startsWith("toggle livemap") && liveMap instanceof LiveMapWindow) {
+			((LiveMapWindow)liveMap).toggle();
+			return true;
+		}
+		return false;
 	}
 
 }
