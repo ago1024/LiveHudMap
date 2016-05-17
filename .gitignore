@@ -1,9 +1,4 @@
-bin.ant
-bin
-dist
-build.properties
+/target/
 .classpath
 .project
 .settings
-*~
-mods/*/*.jar
