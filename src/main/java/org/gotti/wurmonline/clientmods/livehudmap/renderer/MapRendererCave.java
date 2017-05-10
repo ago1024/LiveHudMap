@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 
 import com.wurmonline.client.game.CaveDataBuffer;
+import com.wurmonline.client.renderer.PickData;
 import com.wurmonline.mesh.Tiles.Tile;
 
 public class MapRendererCave extends AbstractCaveRenderer {
@@ -25,11 +26,7 @@ public class MapRendererCave extends AbstractCaveRenderer {
 			for (int y = lWidth - 1; y >= 0; y--) {
 
 				final short height = getHeight(x + xo, y + yo);
-				Tile tile = getTileType(x + xo, y + yo);
-
-				if (tile != Tile.TILE_CAVE_WALL && !isTunnel(tile) && isSurroundedByRock(x + xo, y + yo)) {
-					tile = Tile.TILE_CAVE_WALL;
-				}
+				Tile tile = getEffectiveTileType(x + xo, y + yo);
 
 				final Color color;
 				if (tile != null) {
@@ -63,7 +60,16 @@ public class MapRendererCave extends AbstractCaveRenderer {
 		return bi2;
 	}
 	
-	
+	private Tile getEffectiveTileType(int x, int y) {
+		Tile tile = getTileType(x, y);
+
+		if (tile != Tile.TILE_CAVE_WALL && !isTunnel(tile) && isSurroundedByRock(x, y)) {
+			return Tile.TILE_CAVE_WALL;
+		}
+
+		return tile;
+	}
+
 	private boolean isTunnel(int x, int y) {
 		Tile tileType = getTileType(x, y);
 		return isTunnel(tileType);
@@ -72,9 +78,18 @@ public class MapRendererCave extends AbstractCaveRenderer {
 	private boolean isTunnel(Tile tileType) {
 		return tileType == Tile.TILE_CAVE || tileType == Tile.TILE_CAVE_FLOOR_REINFORCED || tileType == Tile.TILE_CAVE_EXIT;
 	}
-	
 
 	private boolean isSurroundedByRock(int x, int y) {
 		return !isTunnel(x + 1, y) && !isTunnel(x - 1, y) && !isTunnel(x, y + 1) && !isTunnel(x, y - 1);
+	}
+
+	@Override
+	public void pick(PickData pickData, float xMouse, float yMouse, int width, int height, int px, int py) {
+		final int ox = px + (int)(xMouse * width) - width / 2;
+		final int oy = py + (int)(yMouse * height) - height / 2;
+		final Tile tile = getEffectiveTileType(ox, oy);
+		if (tile != Tile.TILE_CAVE_WALL && !isTunnel(tile)) {
+			pickData.addText(tile.getName().replace(" wall", "").replace(" vein", ""));
+		}
 	}
 }

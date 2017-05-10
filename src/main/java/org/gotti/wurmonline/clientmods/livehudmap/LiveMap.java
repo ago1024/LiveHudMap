@@ -8,6 +8,7 @@ import org.lwjgl.opengl.GL11;
 import com.wurmonline.client.game.PlayerPosition;
 import com.wurmonline.client.game.TerrainChangeListener;
 import com.wurmonline.client.game.World;
+import com.wurmonline.client.renderer.PickData;
 import com.wurmonline.client.renderer.cave.CaveBufferChangeListener;
 import com.wurmonline.client.resources.textures.ImageTexture;
 import com.wurmonline.client.resources.textures.ImageTextureLoader;
@@ -151,4 +152,7 @@ public class LiveMap implements TerrainChangeListener, CaveBufferChangeListener 
 		dirty = true;
 	}
 
+	public void pick(final PickData pickData, final float xMouse, final float yMouse) {
+		this.getLayer().pick(pickData, xMouse, yMouse);
+	}
 }

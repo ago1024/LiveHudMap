@@ -16,30 +16,32 @@ import org.gotti.wurmunlimited.modloader.classhooks.HookManager;
 
 import com.wurmonline.client.game.World;
 import com.wurmonline.client.options.Options;
+import com.wurmonline.client.renderer.PickData;
 import com.wurmonline.client.resources.textures.ImageTexture;
 import com.wurmonline.client.resources.textures.ImageTextureLoader;
 import com.wurmonline.client.resources.textures.ResourceTexture;
 import com.wurmonline.client.resources.textures.ResourceTextureLoader;
 
 public class LiveMapWindow extends WWindow {
-	
+
 	private WurmBorderPanel mainPanel;
 	private LiveMap liveMap;
 	private BufferedImage iconImage;
+	private LiveMapView liveMapView;
 
 	public LiveMapWindow(World world) {
 		super("Live map", true);
 		setTitle("Live map");
 		mainPanel = new WurmBorderPanel("Live map");
-		
+
 		this.liveMap = new LiveMap(world, 256);
 		resizable = false;
 
 		iconImage = loadIconImage();
-		
-        WurmArrayPanel<WButton> buttons = new WurmArrayPanel<WButton>("Live map buttons", WurmArrayPanel.DIR_VERTICAL);
-        buttons.setInitialSize(32, 256, false);
-        buttons.addComponent(createButton("+", "Zoom in" , 0, new ButtonListener() {
+
+		WurmArrayPanel<WButton> buttons = new WurmArrayPanel<WButton>("Live map buttons", WurmArrayPanel.DIR_VERTICAL);
+		buttons.setInitialSize(32, 256, false);
+		buttons.addComponent(createButton("+", "Zoom in" , 0, new ButtonListener() {
 
 			@Override
 			public void buttonPressed(WButton p0) {
@@ -49,9 +51,9 @@ public class LiveMapWindow extends WWindow {
 			public void buttonClicked(WButton p0) {
 				liveMap.zoomIn();
 			}
-        }));
+		}));
 
-        buttons.addComponent(createButton("-", "Zoom out" , 1, new ButtonListener() {
+		buttons.addComponent(createButton("-", "Zoom out" , 1, new ButtonListener() {
 
 			@Override
 			public void buttonPressed(WButton p0) {
@@ -61,9 +63,9 @@ public class LiveMapWindow extends WWindow {
 			public void buttonClicked(WButton p0) {
 				liveMap.zoomOut();
 			}
-        }));
-        
-        buttons.addComponent(createButton("Flat", "Flat view" , 2, new ButtonListener() {
+		}));
+
+		buttons.addComponent(createButton("Flat", "Flat view" , 2, new ButtonListener() {
 
 			@Override
 			public void buttonPressed(WButton p0) {
@@ -73,9 +75,9 @@ public class LiveMapWindow extends WWindow {
 			public void buttonClicked(WButton p0) {
 				liveMap.setRenderer(MapLayer.SURFACE, RenderType.FLAT);
 			}
-        }));
-        
-        buttons.addComponent(createButton("3D", "Pseudo 3D view" , 3, new ButtonListener() {
+		}));
+
+		buttons.addComponent(createButton("3D", "Pseudo 3D view" , 3, new ButtonListener() {
 
 			@Override
 			public void buttonPressed(WButton p0) {
@@ -85,9 +87,9 @@ public class LiveMapWindow extends WWindow {
 			public void buttonClicked(WButton p0) {
 				liveMap.setRenderer(MapLayer.SURFACE, RenderType.ISOMETRIC);
 			}
-        }));
-        
-        buttons.addComponent(createButton("Topo", "Topographic view" , 4, new ButtonListener() {
+		}));
+
+		buttons.addComponent(createButton("Topo", "Topographic view" , 4, new ButtonListener() {
 
 			@Override
 			public void buttonPressed(WButton p0) {
@@ -97,21 +99,21 @@ public class LiveMapWindow extends WWindow {
 			public void buttonClicked(WButton p0) {
 				liveMap.setRenderer(MapLayer.SURFACE, RenderType.TOPOGRAPHIC);
 			}
-        }));
-        
-        
-        
-        LiveMapView liveMapView = new LiveMapView("Live map", liveMap, 256, 256);
+		}));
 
-        mainPanel.setComponent(liveMapView, WurmBorderPanel.WEST);
+
+
+		liveMapView = new LiveMapView("Live map", liveMap, 256, 256);
+
+		mainPanel.setComponent(liveMapView, WurmBorderPanel.WEST);
 		mainPanel.setComponent(buttons, WurmBorderPanel.EAST);
-		
+
 		setComponent(mainPanel);
 		setInitialSize(256 + 6 + 32, 256 + 25, false);
 		layout();
 		sizeFlags = FlexComponent.FIXED_WIDTH | FlexComponent.FIXED_HEIGHT;
 	}
-	
+
 	private BufferedImage loadIconImage() {
 		try {
 			URL url = this.getClass().getClassLoader().getResource("livemapicons.png");
@@ -143,12 +145,12 @@ public class LiveMapWindow extends WWindow {
 			ImageTexture texture = ImageTextureLoader.loadNowrapNearestTexture(image);
 			return new LiveMapButton("", tooltip, 32, 32, texture, listener);
 		} else {
-	        final String themeName = Options.guiSkins.options[Options.guiSkins.value()].toLowerCase(Locale.ENGLISH).replace(" ", "");
+			final String themeName = Options.guiSkins.options[Options.guiSkins.value()].toLowerCase(Locale.ENGLISH).replace(" ", "");
 			final ResourceTexture backgroundTexture = ResourceTextureLoader.getTexture("img.gui.button.mainmenu." + themeName);
 			return new WTextureButton(label, tooltip, backgroundTexture, listener);
 		}
 	}
-	
+
 	public void closePressed()
 	{
 		hud.toggleComponent(this);
@@ -157,4 +159,11 @@ public class LiveMapWindow extends WWindow {
 	public void toggle() {
 		hud.toggleComponent(this);
 	}
+	
+	public void pick(final PickData pickData, final int xMouse, final int yMouse) {
+		if (this.liveMapView.contains(xMouse, yMouse)) {
+			this.liveMap.pick(pickData, 1.0f * (xMouse - this.liveMapView.x) / this.liveMapView.width, 1.0f * (yMouse - this.liveMapView.y) / this.liveMapView.width);
+		}
+	}
+	
 }

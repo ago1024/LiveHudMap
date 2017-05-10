@@ -5,7 +5,9 @@ import java.awt.image.BufferedImage;
 import org.gotti.wurmonline.clientmods.livehudmap.renderer.MapRenderer;
 import org.gotti.wurmonline.clientmods.livehudmap.renderer.RenderType;
 
+import com.wurmonline.client.game.PlayerPosition;
 import com.wurmonline.client.game.World;
+import com.wurmonline.client.renderer.PickData;
 import com.wurmonline.math.FastMath;
 
 public class MapLayerView {
@@ -54,4 +56,11 @@ public class MapLayerView {
 			}
 		}
 	}
+	
+	public void pick(PickData pickData, float xMouse, float yMouse) {
+		final int sz = this.type.getMapSize() / this.zoom;
+		final PlayerPosition pos = this.world.getPlayer().getPos();
+		renderer.pick(pickData, xMouse, yMouse, sz, sz, pos.getTileX(), pos.getTileY());
+	}
+	
 }
