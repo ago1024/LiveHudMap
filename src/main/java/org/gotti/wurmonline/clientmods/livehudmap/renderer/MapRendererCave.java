@@ -8,6 +8,9 @@ import com.wurmonline.client.renderer.PickData;
 import com.wurmonline.mesh.Tiles.Tile;
 
 public class MapRendererCave extends AbstractCaveRenderer {
+
+	public static boolean showHiddenOre;
+
 	public MapRendererCave(CaveDataBuffer buffer) {
 		super(buffer);
 	}
@@ -63,7 +66,7 @@ public class MapRendererCave extends AbstractCaveRenderer {
 	private Tile getEffectiveTileType(int x, int y) {
 		Tile tile = getTileType(x, y);
 
-		if (tile != Tile.TILE_CAVE_WALL && !isTunnel(tile) && isSurroundedByRock(x, y)) {
+		if (!showHiddenOre && tile != Tile.TILE_CAVE_WALL && !isTunnel(tile) && isSurroundedByRock(x, y)) {
 			return Tile.TILE_CAVE_WALL;
 		}
 

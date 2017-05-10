@@ -7,6 +7,7 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.gotti.wurmonline.clientmods.livehudmap.renderer.MapRendererCave;
 import org.gotti.wurmonline.clientmods.livehudmap.renderer.RenderType;
 import org.gotti.wurmunlimited.modloader.ReflectionUtil;
 import org.gotti.wurmunlimited.modloader.classhooks.HookManager;
@@ -30,16 +31,20 @@ public class LiveHudMapMod implements WurmClientMod, Initable, PreInitable, Conf
 	private static Logger logger = Logger.getLogger(LiveHudMapMod.class.getName());
 	
 	private boolean hiResMap = false;
+	private boolean showHiddenOre = false;
 	
 	private Object liveMap;
 	
 	@Override
 	public void configure(Properties properties) {
 		hiResMap = Boolean.valueOf(properties.getProperty("hiResMap", String.valueOf(hiResMap)));
+		showHiddenOre = Boolean.valueOf(properties.getProperty("showHiddenOre", String.valueOf(showHiddenOre)));
 		
 		logger.log(Level.INFO, "hiResMap: " + hiResMap);
+		logger.log(Level.INFO, "showHiddenOre: " + showHiddenOre);
 
 		RenderType.highRes = hiResMap;
+		MapRendererCave.showHiddenOre = showHiddenOre;
 	}
 
 	@Override
