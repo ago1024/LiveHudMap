@@ -79,7 +79,10 @@ public class MapRendererCave extends AbstractCaveRenderer {
 	}
 
 	private boolean isTunnel(Tile tileType) {
-		return tileType == Tile.TILE_CAVE || tileType == Tile.TILE_CAVE_FLOOR_REINFORCED || tileType == Tile.TILE_CAVE_EXIT || tileType == Tile.TILE_CAVE_PREPATED_FLOOR_REINFORCED;
+		if (tileType == null) {
+			return false;
+		}
+		return tileType == Tile.TILE_CAVE || tileType == Tile.TILE_CAVE_EXIT || tileType.isReinforcedFloor() || tileType.isRoad();
 	}
 
 	private boolean isSurroundedByRock(int x, int y) {
