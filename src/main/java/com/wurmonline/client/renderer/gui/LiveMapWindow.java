@@ -142,7 +142,7 @@ public class LiveMapWindow extends WWindow {
 	private WButton createButton(String label, String tooltip, int textureIndex, ButtonListener listener) {
 		if (iconImage != null) {
 			BufferedImage image = iconImage.getSubimage(textureIndex * 32, 0, 32, 32);
-			ImageTexture texture = ImageTextureLoader.loadNowrapNearestTexture(image);
+			ImageTexture texture = ImageTextureLoader.loadNowrapNearestTexture(image, false);
 			return new LiveMapButton("", tooltip, 32, 32, texture, listener);
 		} else {
 			final String themeName = Options.guiSkins.options[Options.guiSkins.value()].toLowerCase(Locale.ENGLISH).replace(" ", "");

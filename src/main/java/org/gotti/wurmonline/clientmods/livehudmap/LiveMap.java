@@ -1,18 +1,23 @@
 package org.gotti.wurmonline.clientmods.livehudmap;
 
 import java.awt.image.BufferedImage;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import org.gotti.wurmonline.clientmods.livehudmap.renderer.RenderType;
-import org.lwjgl.opengl.GL11;
+import org.gotti.wurmunlimited.modloader.ReflectionUtil;
 
 import com.wurmonline.client.game.PlayerPosition;
 import com.wurmonline.client.game.TerrainChangeListener;
 import com.wurmonline.client.game.World;
 import com.wurmonline.client.renderer.PickData;
+import com.wurmonline.client.renderer.backend.Queue;
 import com.wurmonline.client.renderer.cave.CaveBufferChangeListener;
+import com.wurmonline.client.renderer.gui.Renderer;
 import com.wurmonline.client.resources.textures.ImageTexture;
 import com.wurmonline.client.resources.textures.ImageTextureLoader;
-import com.wurmonline.client.util.WurmGL;
+import com.wurmonline.client.resources.textures.PreProcessedTextureData;
+import com.wurmonline.client.resources.textures.TextureLoader;
 
 public class LiveMap implements TerrainChangeListener, CaveBufferChangeListener {
 	
@@ -26,11 +31,11 @@ public class LiveMap implements TerrainChangeListener, CaveBufferChangeListener 
 	private BufferedImage image;
 	private ImageTexture texture;
 
-	private float[] textureCoord = { 0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 1.0F, 0.0F };
 	private int x;
 	private int y;
 	
 	private int px = 0, py = 0;
+	private final Method preprocessImage;
 	
 	public LiveMap(World world, int size) {
 		this.size = size;
@@ -42,6 +47,12 @@ public class LiveMap implements TerrainChangeListener, CaveBufferChangeListener 
 		
 		this.surface = new MapLayerView(world, RenderType.FLAT);
 		this.cave = new MapLayerView(world, RenderType.CAVE);
+		
+		try {
+			this.preprocessImage = ReflectionUtil.getMethod(TextureLoader.class, "preprocessImage", new Class[] { BufferedImage.class, boolean.class, boolean.class });
+		} catch (NoSuchMethodException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public void update(int windowX, int windowY) {
@@ -54,10 +65,16 @@ public class LiveMap implements TerrainChangeListener, CaveBufferChangeListener 
 			py = pos.getTileY();
 			
 			image = getLayer().render(px, py);
-			if (texture != null) {
-				WurmGL.wglDeleteTexture(texture.getId());
+			if (texture == null) {
+				texture = ImageTextureLoader.loadNowrapNearestTexture(image, false);
+			} else {
+				try {
+					PreProcessedTextureData data = ReflectionUtil.callPrivateMethod(TextureLoader.class, preprocessImage, image, false, true);
+					texture.deferInit(data, TextureLoader.Filter.NEAREST, false, false, false);
+				} catch (InvocationTargetException | IllegalAccessException | IllegalArgumentException e) {
+					throw new RuntimeException(e);
+				}
 			}
-			texture = ImageTextureLoader.loadNowrapNearestTexture(image);
 			
 			dirty = false;
 		}
@@ -100,45 +117,14 @@ public class LiveMap implements TerrainChangeListener, CaveBufferChangeListener 
 		return world.getPlayerLayer() >= 0;
 	}
 	
-	public void render(float textureX, float textureY, float textureScale) {
+	public void render(Queue queue, float textureX, float textureY, float textureScale) {
 		float resultX = textureX / this.size;
 		float resultY = textureY / this.size;
 
-		textureCoord[0] = resultX;
-		textureCoord[1] = resultY;
-
-		textureCoord[2] = resultX;
-		textureCoord[3] = (resultY + textureScale);
-
-		textureCoord[4] = (resultX + textureScale);
-		textureCoord[5] = (resultY + textureScale);
-
-		textureCoord[6] = (resultX + textureScale);
-		textureCoord[7] = resultY;
-
 		if (texture != null) {
-			renderTexture(x, y, size, size, texture);
-		}
-	}
-
-	protected void renderTexture(int xPosition, int yPosition, int width1, int height1, ImageTexture texture) {
-		if (texture != null) {
-			texture.switchTo();
-			GL11.glBegin(7);
-
-			GL11.glTexCoord2f(textureCoord[0], textureCoord[1]);
-			GL11.glVertex2f(xPosition + 0, yPosition + 0);
-
-			GL11.glTexCoord2f(textureCoord[2], textureCoord[3]);
-			GL11.glVertex2f(xPosition + 0, yPosition + height1);
-
-			GL11.glTexCoord2f(textureCoord[4], textureCoord[5]);
-			GL11.glVertex2f(xPosition + width1, yPosition + height1);
-
-			GL11.glTexCoord2f(textureCoord[6], textureCoord[7]);
-			GL11.glVertex2f(xPosition + width1, yPosition + 0);
-
-			GL11.glEnd();
+			Renderer.texturedQuadAlphaBlend(queue, texture, 1.0f, 1.0f, 1.0f, 1.0f, (float) this.x,
+					(float) this.y, (float) this.size, (float) this.size, resultX, resultY, textureScale,
+					textureScale);
 		}
 	}
 

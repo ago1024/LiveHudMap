@@ -1,7 +1,8 @@
 package com.wurmonline.client.renderer.gui;
 
 import org.gotti.wurmonline.clientmods.livehudmap.LiveMap;
-import org.lwjgl.opengl.GL11;
+
+import com.wurmonline.client.renderer.backend.Queue;
 
 public class LiveMapView extends FlexComponent {
 
@@ -15,22 +16,12 @@ public class LiveMapView extends FlexComponent {
 		this.liveMap = liveMap;
 	}
 	
-	protected void renderComponent(float alpha) {
-		super.renderComponent(alpha);
+	@Override
+	protected void renderComponent(Queue queue, float alpha) {
+		super.renderComponent(queue, alpha);
 		
 		liveMap.update(x, y);
-				
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
-		
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		GL11.glColor4f(r, g, b, 1.0F);
-
-		liveMap.render(0.0F, 0.0F, 1.0F);
-		
-		GL11.glDisable(GL11.GL_BLEND);
-		GL11.glDisable(GL11.GL_TEXTURE_2D);
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		liveMap.render(queue, 0.0F, 0.0F, 1.0F);
 	}
 	
 	
