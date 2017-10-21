@@ -4,7 +4,7 @@
 
 	<groupId>org.gotti.wurmunlimited</groupId>
 	<artifactId>livemap</artifactId>
-	<version>1.6</version>
+	<version>v1.7-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>livemap</name>
