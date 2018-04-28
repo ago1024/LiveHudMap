@@ -49,7 +49,7 @@ public class LiveMap implements TerrainChangeListener, CaveBufferChangeListener 
 		this.cave = new MapLayerView(world, RenderType.CAVE);
 		
 		try {
-			this.preprocessImage = ReflectionUtil.getMethod(TextureLoader.class, "preprocessImage", new Class[] { BufferedImage.class, boolean.class, boolean.class });
+			this.preprocessImage = ReflectionUtil.getMethod(TextureLoader.class, "preprocessImage", new Class[] { BufferedImage.class, boolean.class });
 		} catch (NoSuchMethodException e) {
 			throw new RuntimeException(e);
 		}
@@ -69,7 +69,7 @@ public class LiveMap implements TerrainChangeListener, CaveBufferChangeListener 
 				texture = ImageTextureLoader.loadNowrapNearestTexture(image, false);
 			} else {
 				try {
-					PreProcessedTextureData data = ReflectionUtil.callPrivateMethod(TextureLoader.class, preprocessImage, image, false, true);
+					PreProcessedTextureData data = ReflectionUtil.callPrivateMethod(TextureLoader.class, preprocessImage, image, true);
 					texture.deferInit(data, TextureLoader.Filter.NEAREST, false, false, false);
 				} catch (InvocationTargetException | IllegalAccessException | IllegalArgumentException e) {
 					throw new RuntimeException(e);
